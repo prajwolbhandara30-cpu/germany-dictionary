@@ -4,58 +4,50 @@
     <meta charset="UTF-8">
     <title>Germany Dictionary</title>
     <style>
-        body { background-color: #1a2a3a; color: white; text-align: center; font-family: Arial, sans-serif; padding: 50px; }
-        
-        /* एनिमेसनको लागि */
+        body { background-color: #1a2a3a; color: white; font-family: Arial, sans-serif; padding: 20px; text-align: center; }
+        .welcome-screen { margin-bottom: 30px; animation: fadeIn 2s; }
+        input { padding: 15px; width: 80%; max-width: 400px; border-radius: 5px; border: none; }
+        button { padding: 15px 25px; background-color: #e6b800; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        #result { margin-top: 20px; text-align: left; max-width: 600px; margin: 20px auto; background: #253b50; padding: 20px; border-radius: 10px; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .welcome-screen { animation: fadeIn 2s; }
-        .emoji { font-size: 50px; display: block; margin: 10px 0; }
-        
-        input { padding: 12px; width: 60%; border-radius: 5px; border: none; margin-bottom: 10px; color: #333; }
-        button { padding: 12px 20px; background-color: #e6b800; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        
-        #result { margin-top: 20px; text-align: left; display: inline-block; max-width: 600px; width: 90%; }
-        .meaning-box { background: #253b50; padding: 15px; border-radius: 8px; margin-top: 10px; }
     </style>
 </head>
 <body>
 
     <div class="welcome-screen">
-        <h1>Welcome to Germany Dictionary</h1>
+        <h1>Germany Dictionary</h1>
         <p>Your Gateway to Mastering German</p>
-        <span class="emoji">🙏</span>
+        <p style="font-size: 40px;">🙏</p>
     </div>
 
-    <input type="text" id="searchInput" placeholder="Enter German word...">
+    <input type="text" id="searchInput" placeholder="Enter word or sentence...">
     <button onclick="searchWord()">Search</button>
-    
     <div id="result"></div>
 
     <script>
         async function searchWord() {
             let word = document.getElementById("searchInput").value.trim();
             let resultDiv = document.getElementById("result");
-            
             if (!word) { resultDiv.innerHTML = "Please enter a word!"; return; }
             resultDiv.innerHTML = "Searching...";
 
             try {
-                // जर्मन शब्दको लागि API
-                let response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/de/${word}`);
+                // यहाँ हामी Free Dictionary API प्रयोग गर्दैछौं
+                let response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
                 let data = await response.json();
                 
                 if (data.title) {
-                    resultDiv.innerHTML = "<p>Word not found!</p>";
+                    resultDiv.innerHTML = "<strong>Sorry, word not found.</strong><br>Try a simpler English word or check your spelling.";
                 } else {
-                    // धेरै अर्थहरू देखाउनका लागि लूप
-                    let htmlContent = "<h3>Meanings:</h3>";
-                    data[0].meanings.forEach(m => {
-                        htmlContent += `<div class="meaning-box"><strong>${m.partOfSpeech}:</strong> ${m.definitions[0].definition}</div>`;
+                    let res = data[0];
+                    let output = `<h3>${res.word}</h3>`;
+                    res.meanings.forEach(m => {
+                        output += `<p><strong>${m.partOfSpeech}:</strong> ${m.definitions[0].definition}</p>`;
                     });
-                    resultDiv.innerHTML = htmlContent;
+                    resultDiv.innerHTML = output;
                 }
-            } catch (error) {
-                resultDiv.innerHTML = "Error connecting to server.";
+            } catch (e) {
+                resultDiv.innerHTML = "Error loading dictionary. Please try again later.";
             }
         }
     </script>
