@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Germany Dictionary</title>
+    <style>
+        body {
+            background-color: #1a2a3a;
+            color: white;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            padding: 50px;
+        }
+        input {
+            padding: 10px;
+            width: 60%;
+            border-radius: 5px;
+            border: none;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #e6b800;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        #result {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #ffeb3b;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Welcome to Germany Dictionary</h1>
+    <p>Your Gateway to Mastering German</p>
+    <p style="font-size: 40px;">🙏</p>
+
+    <input type="text" id="searchInput" placeholder="Enter word here...">
+    <button onclick="searchWord()">Search</button>
+    <div id="result"></div>
+
+    <script>
+        async function searchWord() {
+            let word = document.getElementById("searchInput").value;
+            let resultDiv = document.getElementById("result");
+            
+            if (!word) {
+                resultDiv.innerHTML = "Please enter a word!";
+                return;
+            }
+
+            resultDiv.innerHTML = "Searching...";
+
+            try {
+                let response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+                let data = await response.json();
+                
+                if (data.title) {
+                    resultDiv.innerHTML = "Word not found!";
+                } else {
+                    let meaning = data[0].meanings[0].definitions[0].definition;
+                    resultDiv.innerHTML = "<strong>Meaning:</strong> " + meaning;
+                }
+            } catch (error) {
+                resultDiv.innerHTML = "Error connecting to server.";
+            }
+        }
+    </script>
+</body>
+</html>
+
+
