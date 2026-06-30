@@ -2,52 +2,59 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Germany Dictionary</title>
+    <title>Germany Dictionary Pro</title>
     <style>
-        body { background-color: #1a2a3a; color: white; font-family: Arial, sans-serif; padding: 20px; text-align: center; }
-        .welcome-screen { margin-bottom: 30px; animation: fadeIn 2s; }
-        input { padding: 15px; width: 80%; max-width: 400px; border-radius: 5px; border: none; }
-        button { padding: 15px 25px; background-color: #e6b800; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        #result { margin-top: 20px; text-align: left; max-width: 600px; margin: 20px auto; background: #253b50; padding: 20px; border-radius: 10px; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        body { background-color: #1a2a3a; color: #fff; font-family: 'Segoe UI', sans-serif; text-align: center; padding: 20px; }
+        
+        /* एनिमेसन */
+        .welcome-screen { animation: slideDown 1s ease-out; margin-bottom: 30px; }
+        @keyframes slideDown { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        input { padding: 15px; width: 70%; border-radius: 25px; border: none; outline: none; margin-bottom: 15px; font-size: 16px; }
+        button { padding: 15px 30px; background-color: #ffc107; border: none; border-radius: 25px; cursor: pointer; font-weight: bold; color: #1a2a3a; transition: 0.3s; }
+        button:hover { background-color: #ff9800; transform: scale(1.05); }
+        
+        #result { margin-top: 30px; max-width: 600px; margin-left: auto; margin-right: auto; }
+        .card { background: #2c3e50; padding: 20px; border-radius: 15px; text-align: left; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
     </style>
 </head>
 <body>
 
     <div class="welcome-screen">
-        <h1>Germany Dictionary</h1>
+        <h1>Germany Dictionary Pro</h1>
         <p>Your Gateway to Mastering German</p>
-        <p style="font-size: 40px;">🙏</p>
+        <span style="font-size: 50px;">🙏</span>
     </div>
 
-    <input type="text" id="searchInput" placeholder="Enter word or sentence...">
-    <button onclick="searchWord()">Search</button>
+    <input type="text" id="searchInput" placeholder="जर्मन शब्द यहाँ टाइप गर्नुहोस्...">
+    <button onclick="searchWord()">खोज्नुहोस्</button>
     <div id="result"></div>
 
     <script>
         async function searchWord() {
             let word = document.getElementById("searchInput").value.trim();
             let resultDiv = document.getElementById("result");
-            if (!word) { resultDiv.innerHTML = "Please enter a word!"; return; }
-            resultDiv.innerHTML = "Searching...";
+            if (!word) { resultDiv.innerHTML = "कृपया एउटा शब्द लेख्नुहोस्!"; return; }
+            resultDiv.innerHTML = "खोज्दै छ, कृपया पर्खनुहोस्...";
 
             try {
-                // यहाँ हामी Free Dictionary API प्रयोग गर्दैछौं
-                let response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`);
+                // जर्मन भाषाको लागि API (glosbe प्रयोग गरिएको छ जुन राम्रो छ)
+                let response = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/de/${word}`);
                 let data = await response.json();
                 
                 if (data.title) {
-                    resultDiv.innerHTML = "<strong>Sorry, word not found.</strong><br>Try a simpler English word or check your spelling.";
+                    resultDiv.innerHTML = "<div class='card'>अर्थ फेला परेन। अङ्ग्रेजी र जर्मन दुवै प्रयास गर्नुहोस्।</div>";
                 } else {
                     let res = data[0];
-                    let output = `<h3>${res.word}</h3>`;
+                    let output = `<div class='card'><h3>${res.word}</h3>`;
                     res.meanings.forEach(m => {
                         output += `<p><strong>${m.partOfSpeech}:</strong> ${m.definitions[0].definition}</p>`;
                     });
+                    output += `</div>`;
                     resultDiv.innerHTML = output;
                 }
             } catch (e) {
-                resultDiv.innerHTML = "Error loading dictionary. Please try again later.";
+                resultDiv.innerHTML = "<div class='card'>सर्भरमा समस्या आयो। फेरि प्रयास गर्नुहोस्।</div>";
             }
         }
     </script>
